@@ -1,6 +1,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 
+const Thing = require('./models/thing')
+
 const app = express()
 
 mongoose
@@ -27,17 +29,28 @@ app.use((req, res, next) => {
 })
 
 app.post('/api/stuff', (req, res, next) => {
-    console.log(req.body)
-    res.status(201).json({ message: 'Simulation objet créé' })
-    next()
+    delete req.body._id
+    const thing = new Thing({
+        ...req.body,
+    })
+    thing
+        .save()
+        .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
+        .catch((error) => res.status(400).json({ error }))
+    //next()
+    console.log(thing)
 })
 
 app.get('/api/stuff', (req, res, next) => {
-    const stuff = [
-        { id: 'fdd', title: 'xvcvx', price: '23244' },
-        { id: 'fdd', title: 'xvcvx', price: '23244' },
-    ]
-    res.status(200).json(stuff)
+    Thing.find()
+        .then((things) => res.status(200).json(things))
+        .catch((error) => res.status(400).json({ error }))
+})
+
+app.get('/api/stuff/:id', (req, res, next) => {
+    Thing.findOne({ _id: req.params.id })
+        .then((thing) => res.status(200).json(thing))
+        .catch((error) => res.status(404).json({ error }))
 })
 
 module.exports = app
