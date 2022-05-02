@@ -17,6 +17,7 @@
     },
     "homepage": "https://github.com/YoannLh/express#readme",
     "dependencies": {
+        "bcrypt": "^5.0.1",
         "express": "^4.18.0",
         "mongoose": "^6.3.1",
         "mongoose-unique-validator": "^3.0.0"
