@@ -1,25 +1,21 @@
 const Thing = require('../models/Thing')
 
 exports.createThing = (req, res, next) => {
+    console.log('enter createThing !')
+    console.log('req.body : ', req.body)
+    const thingObject = req.body
+    delete thingObject._id
     const thing = new Thing({
-        title: req.body.title,
-        description: req.body.description,
-        imageUrl: req.body.imageUrl,
-        price: req.body.price,
-        userId: req.body.userId,
+        ...thingObject,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${
+            req.file.filename
+        }`,
     })
     thing
         .save()
-        .then(() => {
-            res.status(201).json({
-                message: 'Post saved successfully!',
-            })
-        })
-        .catch((error) => {
-            res.status(400).json({
-                error: error,
-            })
-        })
+        .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
+        .catch((error) => res.status(400).json({ error }))
+    //console.log('thing.imageUrl : ' + thing.imageUrl)
 }
 
 exports.getOneThing = (req, res, next) => {
